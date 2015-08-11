@@ -22,7 +22,9 @@ standard_commands = [
 
 
 def process_command(text):
+    print("Text is %s" % text)
     argv = shlex.split(text)
+    print("Tokenized text is %s" % str(argv))
 
     if len(argv) < 2:
         return 'usage: postbot %s' % standard_commands
