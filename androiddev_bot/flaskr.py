@@ -63,7 +63,7 @@ def process_command(text):
         # Now delete
         submission = r.get_submission(submission_id=target)
         if has_comment:
-            comment = submission.add_comment(message)
+            comment = submission.add_comment(comment_text)
             comment.distinguish()
         submission.remove(spam=is_spam)
         return "Deleted!"
