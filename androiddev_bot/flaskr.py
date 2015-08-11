@@ -9,6 +9,7 @@ from flask import (
 from util import retrieve_credentials
 from canned_responses import cans
 import praw
+import shlex
 from urllib.parse import parse_qs
 
 standard_commands = [
@@ -21,7 +22,7 @@ standard_commands = [
 
 
 def process_command(text):
-    argv = text.split(' ')
+    argv = shlex.split(text)
 
     if len(argv) < 2:
         return 'usage: postbot %s' % standard_commands
