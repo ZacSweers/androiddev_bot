@@ -33,7 +33,7 @@ credentials = retrieve_credentials()
 channel_id = credentials['channel_id']
 
 # Set up slack
-slack = Slacker(credentials['slack_token'])
+slack = Slacker(credentials['slack_key'])
 
 # Set up praw
 r = praw.Reddit('androiddev_watcher by /u/pandanomic')
