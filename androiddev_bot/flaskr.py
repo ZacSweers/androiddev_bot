@@ -92,7 +92,7 @@ app.config['DEBUG'] = True
 credentials = retrieve_credentials()
 
 # Set up praw
-r = praw.Reddit('androiddev helper by /u/pandanomic')
+r = praw.Reddit('androiddev_slacker by /u/pandanomic')
 r.login(credentials['reddit_username'], credentials['reddit_pwd'], disable_warning=True)
 subreddit = r.get_subreddit('androiddev')
 

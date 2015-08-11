@@ -1,4 +1,5 @@
 # Globals
+import datetime
 import praw
 import time
 from slacker import Slacker
@@ -36,20 +37,18 @@ slack = Slacker("")
 
 # Set up praw
 r = praw.Reddit('androiddev_watcher by /u/pandanomic')
-r.login(credentials['reddit_username'], credentials['reddit_pwd'])
+r.login(credentials['reddit_username'], credentials['reddit_pwd'], disable_warning=True)
 subreddit = r.get_subreddit('androiddev')
 
-old_time = time.time()  # Start with the current time
-while True:
-    print("Checking for new posts")
-    posts = [p for p in subreddit.get_new(limit=post_limit) if p.created_utc > old_time]
-    if len(posts) is 0:
-        print("Nothing new")
-    else:
-        print("Length is %s" % len(posts))
-        for post in sorted(posts, key=lambda p: p.created_utc):
-            old_time = post.created_utc
-            print("Post is suspicious, notifying")
-            notify_slack(post)
-            print("Notified")
-    time.sleep(300)
+now = datetime.datetime.utcnow()
+now_minus_10 = now + datetime.timedelta(minutes=-10)
+float_now = time.mktime(now_minus_10.timetuple())
+print("Checking for new posts")
+posts = [p for p in subreddit.get_new(limit=post_limit) if p.created_utc > float_now]
+if len(posts) is 0:
+    print("Nothing new")
+else:
+    print("Length is %s" % len(posts))
+    for post in sorted(posts, key=lambda p: p.created_utc):
+        notify_slack(post)
+        print("Notified")
