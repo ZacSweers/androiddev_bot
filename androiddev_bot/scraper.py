@@ -1,32 +1,33 @@
 # Globals
 import datetime
 import getopt
-import praw
 import time
+import sys
+
+import praw
 from slacker import Slacker
+
+from config import (
+    weekly_threads,
+    post_is_suspicious
+)
+
 from util import (
     retrieve_credentials,
     get_most_recent_thread
 )
-import sys
 
-suspect_title_strings = ['?', 'help', 'stuck', 'why', 'my', 'feedback']
+
 post_limit = 10
 dry_run = False
 
 
-def post_is_suspicious(post_to_check):
-    return \
-        any(word in post_to_check.title.lower() for word in suspect_title_strings) \
-        or post_to_check.domain == 'stackoverflow.com' \
-        or (post_to_check.selftext and 'stackoverflow' in post_to_check.selftext.lower()) \
-        or (post_to_check.selftext_html and any(block in post_to_check.selftext_html for block in ['<code', '%3Ccode']))
-
-
-def notify_slack(credentials, submission):
+def notify_slack(submission):
     slack = Slacker(credentials['slack_key'])
 
     message = '========================'
+    if post_is_suspicious(submission):
+        message += '\n\n@everyone: *SUSPICIOUS*'
     message += '\n\n*%s*' % submission.title
     message += '\n\nID: %s' % submission.id
     message += '\n\nComments link: %s' % submission.permalink
@@ -68,15 +69,12 @@ if __name__ == '__main__':
                     print("Length is %s" % len(posts))
                     for post in sorted(posts, key=lambda p: p.created_utc):
                         if not dry_run:
-                            notify_slack(credentials, post)
+                            notify_slack(post)
                         print("Notified")
             elif o in ("-u", "--unsticky"):
-                # Unsticky the most recent questions thread
-                if a == "hiring" and not datetime.datetime.now().weekday() == 2:
-                    print("Hiring threads should only be removed on Tuesdays")
-                    break
-                elif a == "anything" and not datetime.datetime.now().weekday() == 6:
-                    print("Anything goes threads should only be removed on Saturdays")
+                if a in weekly_threads and datetime.datetime.now().strftime("%A") != weekly_threads[a]['day']:
+                    print("%s threads should will only be removed on %ss" % (
+                        weekly_threads[a]['name'].capitalize(), weekly_threads[a]['day']))
                     break
                 sub = get_most_recent_thread(r, a)
                 if not dry_run:
