@@ -1,19 +1,25 @@
 import getopt
 import json
 import os
+import shlex
+from urllib.parse import parse_qs
+
 from flask import (
     Flask,
     request,
     Response
 )
+import praw
+from slacker import Slacker
+from rx import Observable, Observer
+from rx.concurrency import new_thread_scheduler
+
 from util import (
     retrieve_credentials,
     get_most_recent_thread
 )
 from config import cans
-import praw
-import shlex
-from urllib.parse import parse_qs
+
 
 standard_commands = [
     'rm',
@@ -95,10 +101,34 @@ def process_command(text):
     return 'Something went wrong...'
 
 
+def send_message(response_text):
+    if response_text.startswith("postbot"):
+        # NO DON'T DO THAT BECAUSE THE TRIGGER WILL INFINITE LOOP
+        response_text = "//" + response_text
+    slack.chat.post_message('#newposts', response_text, as_user='postbot')
+
+
+class BotObserver(Observer):
+    def on_next(self, x):
+        print("Got: %s" % x)
+        if x.startswith("postbot"):
+            # NO DON'T DO THAT BECAUSE THE TRIGGER WILL INFINITE LOOP
+            x = "//" + x
+        slack.chat.post_message('#newposts', x, as_user='postbot')
+
+    def on_error(self, e):
+        print("Got error: %s" % e)
+        slack.chat.post_message('#newposts', "Something went wrong, see logs", as_user='postbot')
+
+    def on_completed(self):
+        print("Sequence completed")
+
+
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
 credentials = retrieve_credentials()
+slack = Slacker(credentials['slack_key'])
 
 # Set up praw
 r = praw.Reddit('androiddev_slacker by /u/pandanomic')
@@ -108,8 +138,6 @@ subreddit = r.get_subreddit('androiddev')
 
 @app.route('/message', methods=['POST'])
 def message():
-    error = None
-
     data = parse_qs(request.get_data(False, True, False))
 
     # For some reason these values are lists first
@@ -122,16 +150,15 @@ def message():
 
     # Verify it came from slack
     if token != credentials['slack_token']:
-        return Response(json.dumps({'text': 'Invalid token'}), status=403, mimetype='application/json')
+        return Response(json.dumps({'text': 'Invalid'}), status=403, mimetype='application/json')
     else:
         message_data = data['text']
-        response_text = process_command(message_data)
+        Observable.just(message_data, new_thread_scheduler)\
+            .map(lambda s: process_command(s))\
+            .subscribe(BotObserver())\
 
-    if response_text.startswith("postbot"):
-        # NO DON'T DO THAT BECAUSE THE TRIGGER WILL INFINITE LOOP
-        response_text = "//" + response_text
     response_data = {
-        'text': response_text
+        'text': "Processing!"
     }
     resp = Response(json.dumps(response_data), status=200, mimetype='application/json')
     return resp
