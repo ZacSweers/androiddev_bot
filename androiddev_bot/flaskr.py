@@ -6,7 +6,10 @@ from flask import (
     request,
     Response
 )
-from util import retrieve_credentials
+from util import (
+    retrieve_credentials,
+    get_most_recent_thread
+)
 from canned_responses import cans
 import praw
 import shlex
@@ -59,6 +62,9 @@ def process_command(text):
                 break  # Only take one of message or canned
             elif o in ("-c", "--canned"):
                 comment_text = cans[a]
+                if a == "questions_thread":
+                    comment_text = comment_text + "\n\nToday's thread can be found here: " \
+                                                + get_most_recent_thread(r, "questions").url
                 break  # Only take one of message or canned
 
         has_comment = comment_text is not None
@@ -78,7 +84,7 @@ def process_command(text):
     elif command == 'ban':
         # # target is the user id
         # try:
-        #     opts, args = getopt.getopt(args, "tm:n:", ["temp", "message=", "note="])
+        # opts, args = getopt.getopt(args, "tm:n:", ["temp", "message=", "note="])
         # except getopt.GetoptError as err:
         #     return str(err)
         #
