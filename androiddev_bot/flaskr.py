@@ -85,7 +85,10 @@ def process_command(text):
     elif command == 'flair':
         text = args[0]
         submission = r.get_submission(submission_id=target)
-        submission.set_flair(text)
+        if text in config.flair_mapping:
+            submission.set_flair(flair_text=text, flair_css_class=config.flair_mapping[text])
+        else:
+            submission.set_flair(text)
         return "Flaired!"
     elif command == 'ban':
         # # target is the user id

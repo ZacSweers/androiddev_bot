@@ -23,6 +23,13 @@ weekly_threads = {
     }
 }
 
+flair_mapping = {
+    'Library': 'library',
+    'Discussion': 'discussion',
+    'News': 'news',
+    'Tech Talk': 'talk',
+}
+
 
 def post_is_suspicious(post_to_check: praw.objects.Submission) -> bool:
     """
