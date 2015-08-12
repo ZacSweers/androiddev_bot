@@ -10,7 +10,7 @@ from util import (
     retrieve_credentials,
     get_most_recent_thread
 )
-from canned_responses import cans
+from config import cans
 import praw
 import shlex
 from urllib.parse import parse_qs
