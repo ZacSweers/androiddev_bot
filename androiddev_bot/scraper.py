@@ -34,7 +34,7 @@ def notify_slack(submission: praw.objects.Submission):
 
     message = '========================'
     if post_is_suspicious(submission):
-        message += '\n\n@everyone: *SUSPICIOUS*'
+        message += '\n\n<!everyone> *SUSPICIOUS*'
     message += '\n\n*%s*' % submission.title
     message += '\n\nID: %s' % submission.id
     message += '\n\nComments link: %s' % submission.permalink
