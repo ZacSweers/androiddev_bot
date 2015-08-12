@@ -157,10 +157,7 @@ def message():
             .map(lambda s: process_command(s))\
             .subscribe(BotObserver())\
 
-    response_data = {
-        'text': "Processing!"
-    }
-    resp = Response(json.dumps(response_data), status=200, mimetype='application/json')
+    resp = Response(None, status=200, mimetype='application/json')
     return resp
 
 
