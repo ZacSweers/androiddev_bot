@@ -4,6 +4,11 @@ import praw
 
 
 def retrieve_credentials():
+    """
+    Retrieves credentials either from a local credentials.json file or ENV variables on Heroku
+
+    :return:
+    """
     if os.path.isfile('credentials.json'):
         with open('credentials.json') as data_file:
             return json.load(data_file)
@@ -19,10 +24,12 @@ def retrieve_credentials():
         return None
 
 
-def get_most_recent_thread(r, keyword):
+def get_most_recent_thread(r: praw.Reddit, keyword: str) -> praw.objects.Submission:
     """
-    A function for retrieving the most recent Automoderator thread with a given keyword
+    A function for retrieving the most recent Automoderator thread matching a given keyword
 
+    :type keyword: str
+    :type r: praw.Reddit
     :param r: Reddit instance for making the search call
     :param keyword: Keyword to search on
     :rtype : praw.objects.Submission

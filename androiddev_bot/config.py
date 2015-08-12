@@ -1,6 +1,9 @@
 import praw
 
+# Put your vars here
 suspect_title_strings = ['?', 'help', 'stuck', 'why', 'my', 'feedback']
+
+subreddit = 'androiddev'
 
 # Canned responses
 cans = {

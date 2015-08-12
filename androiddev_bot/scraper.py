@@ -7,6 +7,7 @@ import sys
 import praw
 from slacker import Slacker
 
+import config
 from config import (
     weekly_threads,
     post_is_suspicious
@@ -22,7 +23,13 @@ post_limit = 10
 dry_run = False
 
 
-def notify_slack(submission):
+def notify_slack(submission: praw.objects.Submission):
+    """
+    Takes a submission and generates a message for Slack
+
+    :type submission: praw.objects.Submission
+    :param submission: Submission instance to parse
+    """
     slack = Slacker(credentials['slack_key'])
 
     message = '========================'
@@ -43,9 +50,9 @@ if __name__ == '__main__':
     channel_id = credentials['channel_id']
 
     # Set up praw
-    r = praw.Reddit('androiddev_watcher by /u/pandanomic')
+    r = praw.Reddit('%s_watcher by /u/pandanomic' % config.subreddit)
     r.login(credentials['reddit_username'], credentials['reddit_pwd'], disable_warning=True)
-    subreddit = r.get_subreddit('androiddev')
+    subreddit = r.get_subreddit(config.subreddit)
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "dpu:", ["dry", "poll", "unsticky="])

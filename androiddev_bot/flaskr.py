@@ -18,7 +18,7 @@ from util import (
     retrieve_credentials,
     get_most_recent_thread
 )
-from config import cans
+import config
 
 
 standard_commands = [
@@ -67,7 +67,7 @@ def process_command(text):
                 comment_text = a
                 break  # Only take one of message or canned
             elif o in ("-c", "--canned"):
-                comment_text = cans[a]
+                comment_text = config.cans[a]
                 if a == "questions_thread":
                     comment_text = comment_text + "\n\nToday's thread can be found here: " \
                                                 + get_most_recent_thread(r, "questions").url
@@ -131,9 +131,9 @@ credentials = retrieve_credentials()
 slack = Slacker(credentials['slack_key'])
 
 # Set up praw
-r = praw.Reddit('androiddev_slacker by /u/pandanomic')
+r = praw.Reddit('%s_watcher by /u/pandanomic' % config.subreddit)
 r.login(credentials['reddit_username'], credentials['reddit_pwd'], disable_warning=True)
-subreddit = r.get_subreddit('androiddev')
+subreddit = r.get_subreddit(config.subreddit)
 
 
 @app.route('/message', methods=['POST'])
