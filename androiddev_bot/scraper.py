@@ -57,7 +57,7 @@ if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:], "dpu:", ["dry", "poll", "unsticky="])
     except getopt.GetoptError:
-        print('check_and_delete.py -d -p -u')
+        print('scraper.py -d -p -u')
         sys.exit(2)
 
     if len(opts) != 0:
