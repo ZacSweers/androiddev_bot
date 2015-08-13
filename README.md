@@ -15,6 +15,7 @@ Actions are as follows
     * -c responseName
     * --canned=responseName
 * `flair` <postid> '<My message>'
+* `approve` <postid>
 * `ban` <userid>
   * Temp
     * -t 
