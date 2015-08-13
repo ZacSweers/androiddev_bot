@@ -37,6 +37,8 @@ def notify_slack(submission: praw.objects.Submission):
         message += '\n\n*SUSPICIOUS*'
     message += '\n\n*%s*' % submission.title
     message += '\n\nID: %s' % submission.id
+    if submission.author:
+        message += '\n\nUser: /u/%s' % submission.author.name
     message += '\n\nComments link: %s' % submission.permalink
     if submission.url and 'www.reddit.com' not in submission.url:
         message += '\n\nPost link: %s' % submission.url
