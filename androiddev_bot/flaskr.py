@@ -146,9 +146,6 @@ subreddit = r.get_subreddit(config.subreddit)
 @app.route('/message', methods=['POST'])
 def message():
     data = dict([(x.split('=')[0], x.split('=')[1]) for x in request.get_data(False, True, False).split('\n')])
-
-    # For some reason these values are lists first
-    # data = {x: data[x][0] for x in data}
     token = data['token']
 
     print("Credentials are - \n" + str(credentials))
