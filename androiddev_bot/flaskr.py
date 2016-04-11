@@ -2,24 +2,21 @@ import getopt
 import json
 import os
 import shlex
-from urllib.parse import parse_qs
 
+import config
+import praw
 from flask import (
     Flask,
     request,
     Response
 )
-import praw
-from slacker import Slacker
 from rx import Observable, Observer
 from rx.concurrency import new_thread_scheduler
-
+from slacker import Slacker
 from util import (
     retrieve_credentials,
     get_most_recent_thread
 )
-import config
-
 
 standard_commands = [
     'rm',
@@ -148,10 +145,10 @@ subreddit = r.get_subreddit(config.subreddit)
 
 @app.route('/message', methods=['POST'])
 def message():
-    data = parse_qs(request.get_data(False, True, False))
+    data = dict([(x.split('=')[0], x.split('=')[1]) for x in request.get_data(False, True, False).split('\n')])
 
     # For some reason these values are lists first
-    data = {x: data[x][0] for x in data}
+    # data = {x: data[x][0] for x in data}
     token = data['token']
 
     print("Credentials are - \n" + str(credentials))
