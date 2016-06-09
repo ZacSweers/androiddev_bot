@@ -32,9 +32,9 @@ def notify_slack(submission: praw.objects.Submission):
     """
     slack = Slacker(credentials['slack_key'])
 
-    message = '========================'
+    message = ''
     if post_is_suspicious(submission):
-        message += '\n\n*SUSPICIOUS*'
+        message += '*SUSPICIOUS*'
     message += '\n\n*%s*' % submission.title
     message += '\n\nID: %s' % submission.id
     if submission.author:
@@ -42,8 +42,6 @@ def notify_slack(submission: praw.objects.Submission):
     message += '\n\nComments link: %s' % submission.permalink
     if submission.url and 'www.reddit.com' not in submission.url:
         message += '\n\nPost link: %s' % submission.url
-    if submission.selftext:
-        message += '\n\n> %s' % submission.selftext.partition('\n')[0]
     slack.chat.post_message('#newposts', message, as_user='postbot')
 
 
