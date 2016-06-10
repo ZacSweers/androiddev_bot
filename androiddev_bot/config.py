@@ -8,7 +8,8 @@ subreddit = 'androiddev'
 # Canned responses
 cans = {
     'questions_thread': "Removed because, per sub rules, this doesn't merit its own post. We have a questions thread every day, please use it for questions like this.",
-    'rules': 'Removed because posts like this are against the sub rules.'
+    'rules': 'Removed because posts like this are against the sub rules.',
+    'wiki': "Removed because relevant information can be found in the /r/androiddev [wiki](https://www.reddit.com/r/androiddev/wiki/index)"
 }
 
 # Specify the keyword and what days they should be removed
