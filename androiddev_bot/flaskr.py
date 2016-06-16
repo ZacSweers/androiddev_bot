@@ -62,7 +62,7 @@ def process_command(text):
 
         submission = r.get_submission(submission_id=target)
 
-        if submission.subreddit_id != 't5_2r26y' and submission.subreddit_id != 't5_37w6v':
+        if submission.subreddit.display_name != 'androiddev' and submission.subreddit.display_name != 'androiddevtest':
             return target + " is not a valid /r/androiddev ID"
 
         is_spam = False
