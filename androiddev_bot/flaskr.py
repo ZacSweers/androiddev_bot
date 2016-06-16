@@ -60,6 +60,11 @@ def process_command(text):
         except getopt.GetoptError as err:
             return str(err)
 
+        submission = r.get_submission(submission_id=target)
+
+        if submission.subreddit.display_name != 'androiddev' and submission.subreddit.display_name != 'androiddevtest':
+            return target + " is not a valid /r/androiddev ID"
+
         is_spam = False
         comment_text = None
 
@@ -79,7 +84,6 @@ def process_command(text):
         has_comment = comment_text is not None
 
         # Now delete
-        submission = r.get_submission(submission_id=target)
         if has_comment:
             comment = submission.add_comment(comment_text)
             comment.distinguish()
